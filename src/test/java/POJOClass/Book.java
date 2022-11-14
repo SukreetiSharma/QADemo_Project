@@ -1,11 +1,13 @@
 package POJOClass;
 
-public class BookStorePojoClass {
+public class Book {
     private String title;
     private String author;
     private String publisher;
-    public String getTitle() {
-        return title;
+    public Book (String title, String author, String publisher) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
     }
 
     public void setTitle(String title) {
@@ -28,4 +30,12 @@ public class BookStorePojoClass {
         this.publisher = publisher;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public String toString() {
+        return "Title : " + title +" "+ "author : " + author +" publisher : " + publisher;
+    }
 }

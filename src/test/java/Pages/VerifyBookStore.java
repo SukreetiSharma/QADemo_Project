@@ -1,9 +1,8 @@
 package Pages;
 
 import Enums.HomePage;
-import POJOClass.BookStorePojoClass;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import POJOClass.Book;
+import com.google.gson.*;
 import dev.failsafe.internal.util.Assert;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -15,11 +14,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class VerifyBookStore {
     String Elements = "//h5[contains(text(),'%s')]";
     By BookStore = By.xpath("//div[@class='main-header']");
+    String Row ="//a[contains(text(),'%s')]";
+    String Name = "//div[contains(text(),'%s')]";
     public static Properties prop;
     WebDriver driver;
     WebDriverWait wait;
@@ -51,17 +54,38 @@ public class VerifyBookStore {
         js.executeScript("window.scrollBy(0,850)", "");
         driver.findElement(By.xpath(String.format(Elements, HomePage.BOOKSTORE.getResourcesName()))).click();
     }
-    public void verifyBookStore(){
+    public void verifyBookStore() {
         String actual4 = driver.findElement(BookStore).getText();
         Assert.isTrue(actual4.equals(prop.getProperty("Title")), "Expected result does not match with actual result");
         RestAssured.baseURI = "https://demoqa.com";
         RequestSpecification httpRequest = RestAssured.given();
         Response response = httpRequest.get("/BookStore/v1/Books");
-        //JsonObject jsonObject =
         String Response = response.asString();
-        System.out.println("Response Body is =>  " + Response);
-        Gson gson = new Gson();
-        BookStorePojoClass BookStore = gson.fromJson(Response, BookStorePojoClass.class);
-        System.out.println("Title :"+ BookStore.getTitle());
+        JsonElement fileElement = JsonParser.parseString(Response);
+        JsonObject fileObject = fileElement.getAsJsonObject();
+        JsonArray JsonArrayOfAddress = fileObject.get("books").getAsJsonArray();
+        List<Book> books = new ArrayList();
+        JsonObject BooksJsonObject = null;
+        for (JsonElement BooksElement : JsonArrayOfAddress.getAsJsonArray()) {
+            BooksJsonObject = BooksElement.getAsJsonObject();
+            String title = BooksJsonObject.get("title").getAsString();
+            String author = BooksJsonObject.get("author").getAsString();
+            String publisher = BooksJsonObject.get("publisher").getAsString();
+            Book Details = new Book(title, author, publisher);
+            books.add(Details);
+        }
+        Book first = books.get(0);
+        String Title = first.getTitle();
+        String Author = first.getAuthor();
+        String Publisher = first.getPublisher();
+        System.out.println(Title);
+        System.out.println(Author);
+        System.out.println(Publisher);
+        String actual5 = driver.findElement(By.xpath(String.format(Row, HomePage.TITLE.getResourcesName()))).getText();
+        Assert.isTrue(actual5.equals(Title), "Expected result does not match with actual result");
+        String actual6 = driver.findElement(By.xpath(String.format(Name, HomePage.AUTHOR.getResourcesName()))).getText();
+        Assert.isTrue(actual6.equals(Author), "Expected result does not match with actual result");
+        String actual7 = driver.findElement(By.xpath(String.format(Name, HomePage.PUBLISHER.getResourcesName()))).getText();
+        Assert.isTrue(actual7.equals(Publisher), "Expected result does not match with actual result");
     }
 }

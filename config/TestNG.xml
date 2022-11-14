@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Cases" verbose="1" >
+    <test name="Verify User is able to navigate Homepage">
+        <parameter name="browserName" value="chrome"/>
+        <parameter name="testRunId" value="TC-1"/>
+        <classes>
+            <class name="Test.TestHomePage"/>
+        </classes>
+    </test>
+</suite>

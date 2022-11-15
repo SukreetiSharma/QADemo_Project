@@ -4,15 +4,15 @@ import org.openqa.selenium.WebDriver;
 
 public class PageFactory {
     WebDriver driver;
-    private VerifyBookStore HomePage;
+    private VerifyBookStorePage HomePage;
 
     public PageFactory(WebDriver driver){
         this.driver = driver;
     }
 
-    public VerifyBookStore getHomePage(){
+    public VerifyBookStorePage getHomePage(){
         if(HomePage == null){
-            HomePage = new VerifyBookStore(driver);
+            HomePage = new VerifyBookStorePage(driver);
         }
         return HomePage;
     }

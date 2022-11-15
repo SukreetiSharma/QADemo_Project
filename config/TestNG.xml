@@ -1,5 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="All Test Cases" verbose="1" >
+    <listeners>
+        <listener class-name="Reports.Listener"/>
+    </listeners>
     <test name="Verify User is able to navigate Homepage">
         <parameter name="browserName" value="chrome"/>
         <parameter name="testRunId" value="TC-1"/>

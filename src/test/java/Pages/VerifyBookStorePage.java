@@ -10,24 +10,29 @@ import io.restassured.specification.RequestSpecification;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class VerifyBookStore {
+public class VerifyBookStorePage {
+
+    String[] strArr = {"Elements","Forms","Alerts, Frame & Windows","Interactions","Widgets","Book Store Application"};
+    By ele = By.xpath("//h5");
     String Elements = "//h5[contains(text(),'%s')]";
     By BookStore = By.xpath("//div[@class='main-header']");
-    String Row ="//a[contains(text(),'%s')]";
-    String Name = "//div[contains(text(),'%s')]";
-    String authorName = "(//div[contains(text(),\"%s\")])[1]";
+    String Title ="//a[contains(text(),'%s')]";
+    String Author = "//div[contains(text(),'%s')]";
+    String Publisher = "(//div[contains(text(),\"%s\")])[1]";
     public static Properties prop;
     WebDriver driver;
     WebDriverWait wait;
-    public VerifyBookStore(WebDriver driver) {
+    public VerifyBookStorePage(WebDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
@@ -39,23 +44,20 @@ public class VerifyBookStore {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String actual = driver.findElement(By.xpath(String.format(Elements, HomePage.ELEMENT.getResourcesName()))).getText();
-        Assert.isTrue(actual.equals(prop.getProperty("Element")), "Expected result does not match with actual result");
-        String act = driver.findElement(By.xpath(String.format(Elements, HomePage.FORM.getResourcesName()))).getText();
-        Assert.isTrue(act.equals(prop.getProperty("Form")), "Expected result does not match with actual result");
-        String actual1 = driver.findElement(By.xpath(String.format(Elements, HomePage.ALERTS.getResourcesName()))).getText();
-        Assert.isTrue(actual1.equals(prop.getProperty("Alerts&Frame")), "Expected result does not match with actual result");
-        String actual2 = driver.findElement(By.xpath(String.format(Elements, HomePage.INTERACTIONS.getResourcesName()))).getText();
-        Assert.isTrue(actual2.equals(prop.getProperty("Interactions")), "Expected result does not match with actual result");
-        String actual3 = driver.findElement(By.xpath(String.format(Elements, HomePage.WIDGETS.getResourcesName()))).getText();
-        Assert.isTrue(actual3.equals(prop.getProperty("Widgits")), "Expected result does not match with actual result");
-        String actual4 = driver.findElement(By.xpath(String.format(Elements, HomePage.BOOKSTORE.getResourcesName()))).getText();
-        Assert.isTrue(actual4.equals(prop.getProperty("BookStore")), "Expected result does not match with actual result");
+        List<WebElement> Element = driver.findElements(ele);
+        for (WebElement allElements : Element) {
+            String AllHomePageElements = allElements.getText();
+            System.out.println(AllHomePageElements);
+        }
+        for(String s : Arrays.asList(strArr)){
+                String actual = driver.findElement(By.xpath(String.format(Elements,s))).getText();
+        Assert.isTrue(actual.equals(s), "Expected result does not match with actual result");
+            }
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,850)", "");
         driver.findElement(By.xpath(String.format(Elements, HomePage.BOOKSTORE.getResourcesName()))).click();
     }
-    public void verifyBookStore() {
+    public void BookStorePage() {
         String actual4 = driver.findElement(BookStore).getText();
         Assert.isTrue(actual4.equals(prop.getProperty("Title")), "Expected result does not match with actual result");
         RestAssured.baseURI = "https://demoqa.com";
@@ -66,9 +68,8 @@ public class VerifyBookStore {
         JsonObject fileObject = fileElement.getAsJsonObject();
         JsonArray JsonArrayOfAddress = fileObject.get("books").getAsJsonArray();
         List<Book> books = new ArrayList();
-        JsonObject BooksJsonObject = null;
         for (JsonElement BooksElement : JsonArrayOfAddress.getAsJsonArray()) {
-            BooksJsonObject = BooksElement.getAsJsonObject();
+            JsonObject  BooksJsonObject = BooksElement.getAsJsonObject();
             String title = BooksJsonObject.get("title").getAsString();
             String author = BooksJsonObject.get("author").getAsString();
             String publisher = BooksJsonObject.get("publisher").getAsString();
@@ -82,11 +83,11 @@ public class VerifyBookStore {
         System.out.println(Title);
         System.out.println(Author);
         System.out.println(Publisher);
-        String actual5 = driver.findElement(By.xpath(String.format(Row, Title))).getText();
-        Assert.isTrue(actual5.equals(Title), "Expected result does not match with actual result");
-        String actual6 = driver.findElement(By.xpath(String.format(Name, Author))).getText();
-        Assert.isTrue(actual6.equals(Author), "Expected result does not match with actual result");
-        String actual7 = driver.findElement(By.xpath(String.format(authorName, Publisher))).getText();
-        Assert.isTrue(actual7.equals(Publisher), "Expected result does not match with actual result");
+        String actualTitle = driver.findElement(By.xpath(String.format(this.Title, Title))).getText();
+        Assert.isTrue(actualTitle.equals(Title), "Expected result does not match with actual result");
+        String actualAuthor = driver.findElement(By.xpath(String.format(this.Author, Author))).getText();
+        Assert.isTrue(actualAuthor.equals(Author), "Expected result does not match with actual result");
+        String actualPublisher = driver.findElement(By.xpath(String.format(this.Publisher, Publisher))).getText();
+        Assert.isTrue(actualPublisher.equals(Publisher), "Expected result does not match with actual result");
     }
 }

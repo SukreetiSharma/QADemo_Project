@@ -8,7 +8,7 @@ public class TestHomePage extends BaseClass{
     @Test
     public void HomePage() throws IOException {
         pageFactory.getHomePage().HomePage();
-        pageFactory.getHomePage().verifyBookStore();
+        pageFactory.getHomePage().BookStorePage();
     }
 
 }
